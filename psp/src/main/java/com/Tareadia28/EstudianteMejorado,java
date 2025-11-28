@@ -1,0 +1,49 @@
+import java.util.concurrent.TimeUnit;
+
+public class EstudianteMejorado extends Estudiante {
+    private static final int TIMEOUT_ADQUISICION_MS = 5000; // 5 segundos reales
+    
+    public EstudianteMejorado(int id, Libro[] libros, long seed) {
+        super(id, libros, seed);
+    }
+    
+    @Override
+    protected void adquirirLibros(Libro[] librosSeleccionados) throws InterruptedException {
+        log("intentando adquirir " + librosSeleccionados[0] + " y " + librosSeleccionados[1] + 
+            " con timeout");
+        
+        long tiempoInicioAdquisicion = System.currentTimeMillis();
+        boolean exito = false;
+        
+        try {
+            // Intentar adquirir primer libro con timeout
+            if (librosSeleccionados[0].intentarAdquirir()) {
+                log("adquirió " + librosSeleccionados[0]);
+                
+                try {
+                    // Intentar adquirir segundo libro con timeout
+                    if (librosSeleccionados[1].intentarAdquirir()) {
+                        log("adquirió " + librosSeleccionados[1]);
+                        exito = true;
+                    } else {
+                        log("timeout al adquirir " + librosSeleccionados[1]);
+                        librosSeleccionados[0].liberar();
+                        throw new InterruptedException("Timeout al adquirir libros");
+                    }
+                } catch (Exception e) {
+                    librosSeleccionados[0].liberar();
+                    throw e;
+                }
+            } else {
+                log("timeout al adquirir " + librosSeleccionados[0]);
+                throw new InterruptedException("Timeout al adquirir libros");
+            }
+            
+        } finally {
+            if (!exito) {
+                long tiempoEspera = System.currentTimeMillis() - tiempoInicioAdquisicion;
+                log("falló al adquirir libros después de " + tiempoEspera + "ms");
+            }
+        }
+    }
+}
