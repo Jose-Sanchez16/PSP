@@ -15,7 +15,7 @@ public class Main {
         System.out.println("==================================================\n");
         
         // Crear la caja fuerte con saldo inicial de 10.000 €
-        CajaFuerte caja = new CajaFuerte(10000);
+        CajaFuerte caja = new CajaFuerte(1000000);
         caja.mostrarEstado();
         
         Scanner scanner = new Scanner(System.in);
@@ -92,7 +92,7 @@ public class Main {
             System.out.println("\nSimulacion ejecutandose por " + segundos + " segundos...\n");
             
             // Esperar el tiempo especificado
-            Thread.sleep(segundos * 10L);
+            Thread.sleep(segundos * 300000L);
             
             // Detener todos los cajeros
             System.out.println("\nDETENIENDO CAJEROS...\n");
